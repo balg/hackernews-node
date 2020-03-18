@@ -43,28 +43,31 @@ const post = (root, args, context, info) => {
   });
 };
 
-// TODO
-// deleteLink: (root, args) => {
-//   const { id } = args;
-//   const linkToDelete = links.find(link => link.id === id);
-//   if (linkToDelete) {
-//     links = links.filter(link => link.id !== linkToDelete.id);
-//   }
-//   return linkToDelete;
-// },
+const deleteLink = (root, args, context, info) => {
+  getUserId(context);
+  return context.prisma.deleteLink({
+    id: args.id
+  });
+};
 
 const updateLink = (root, args, context, info) => {
-  const userId = getUserId(context);
+  getUserId(context);
   const { id, url, description } = args;
-  return context.prisma.updateLink(
-    { description, url, postedBy: { connect: { id: userId } } },
-    { id }
-  );
+  return context.prisma.updateLink({
+    data: {
+      description,
+      url
+    },
+    where: {
+      id
+    }
+  });
 };
 
 module.exports = {
   signup,
   login,
   post,
-  updateLink
+  updateLink,
+  deleteLink
 };
